@@ -1,10 +1,10 @@
 resource "google_compute_instance" "VM-INSTANCE"{
 	name = "${var.controller_instance}"
-	machine_type = "n1-standard-1"
+	machine_type = "${var.machine_type}"
 	zone = "${var.zone}"
 	boot_disk {
 		initialize_params {
-			image = "ubuntu-1804-bionic-v20181222"
+			image = "${var.image-boot}"
 		}
 	}
 	network_interface {
