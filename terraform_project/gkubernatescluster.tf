@@ -44,7 +44,8 @@ resource "google_compute_address" "default"{
 	
 }
 resource "google_compute_instance" "controller"{
-	name = "${var.controller_instance}"
+        count = 3
+	name = "controller-${count.index}"
 	machine_type = "${var.machine_type}"
 	zone = "${var.zone}"
 	can_ip_forward = true
@@ -56,7 +57,7 @@ resource "google_compute_instance" "controller"{
 	}
 	network_interface {
 		subnetwork = "${google_compute_subnetwork.default.name}"
-		network_ip = "10.240.0.15"
+		network_ip = "10.240.0.1${count.index}"
 		
 	}
 	service_account{
@@ -64,7 +65,8 @@ resource "google_compute_instance" "controller"{
 	}
 }
 resource "google_compute_instance" "worker"{
-	name = "${var.worker_instance}"
+	count = 3
+	name = "worker-${count.index}"
 	machine_type = "${var.machine_type}"
 	zone = "${var.zone}"
 	can_ip_forward = true
@@ -76,12 +78,12 @@ resource "google_compute_instance" "worker"{
 	}
 	network_interface {
 		subnetwork = "${google_compute_subnetwork.default.name}"
-		network_ip = "10.240.0.25"
+		network_ip = "10.240.0.2${count.index}"
 	}
 	service_account{
 		scopes = ["compute-rw", "storage-ro", "service-management", "service-control", "logging-write","monitoring"]
 	}
 	metadata = { 
-		pod-cidr = "10.200.5.0/24"	
+		pod-cidr = "10.200.${count.index}.0/24"	
 	}
 }
