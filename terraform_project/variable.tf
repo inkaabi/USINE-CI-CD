@@ -2,7 +2,12 @@
 variable "controller_instance"{
 	type = "string"
 	description = "name of VM instance"
-	default = "controller-4"
+	default = "controller-5"
+}
+variable "worker_instance"{
+	type = "string"
+	description = "name of worker node"
+	default = "worker-5"
 }
 variable "zone"{
 	type = "string"
