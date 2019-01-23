@@ -4,7 +4,7 @@ resource "google_compute_network" "default"{
 	auto_create_subnetworks = "false"
 }
 resource "google_compute_subnetwork" "default"{
-	name = "kubernetes"
+	name = "kubernetes2"
 	network = "${google_compute_network.default.name}"
 	ip_cidr_range = "10.240.0.0/24"
 }
@@ -41,7 +41,7 @@ resource "google_compute_firewall" "external"{
 }
 resource "google_compute_address" "default"{
 	name = "kubernetes-the-easy-way"
-	region = "${var.region}"
+	
 }
 resource "google_compute_instance" "controller"{
 	name = "${var.controller_instance}"
