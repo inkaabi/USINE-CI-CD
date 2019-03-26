@@ -1,0 +1,6 @@
+plugin: gcp_compute
+projects:
+  - google.com:graphite-playground
+filters:
+auth_kind: serviceaccount
+service_account_file: /home/osboxes/Desktop/terraform/creds/Rhama-2598c14ed6ec.json

@@ -1,0 +1,60 @@
+---
+- hosts: controller
+  remote_user: root
+  tasks:
+  - name: Create the Kubernetes configuration directory
+    file:
+      path: /etc/kubernetes/config
+      state: directory
+  - name: Download the official kube-apiserver binaries
+    get_url: 
+      url: https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/linux/amd64/kube-apiserver
+      dest: /usr/local/bin/kube-apiserver
+      mode: 0700
+  - name: Download the official kube-controller-manager binaries
+    get_url: 
+      url: https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/linux/amd64/kube-controller-manager
+      dest: /usr/local/bin/kube-controller-manager
+      mode: 0700
+  - name: Download the official kube-scheduler binaries
+    get_url: 
+      url: https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/linux/amd64/kube-scheduler
+      dest: /usr/local/bin/kube-scheduler
+      mode: 0700
+  - name: Download the official kubectl binaries
+    get_url: 
+      url: https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/linux/amd64/kubectl
+      dest: /usr/local/bin/kubectl
+      mode: 0700
+  - name: create /var/lib/kubernetes/ repository
+    file:
+      path: /var/lib/kubernetes/
+      state: directory
+  - name: copy ca certif to /var/lib/kubernetes/
+    copy:
+      src: /home/osboxes/ansible/cert/ca.pem
+      dest: /var/lib/kubernetes/ca.pem
+  - name: copy ca key to /var/lib/kubernetes/
+    copy:
+      src: /home/osboxes/ansible/cert/ca-key.pem
+      dest: /var/lib/kubernetes/ca-key.pem
+  - name: copy kubernetes-key to /var/lib/kubernetes/
+    copy:
+      src: /home/osboxes/ansible/cert/kubernetes-key.pem
+      dest: /var/lib/kubernetes/kubernetes-key.pem
+  - name: copy kubernetes to /var/lib/kubernetes/
+    copy:
+      src: /home/osboxes/ansible/cert/kubernetes.pem
+      dest: /var/lib/kubernetes/kubernetes.pem
+  - name: copy service-account-key to /var/lib/kubernetes/
+    copy:
+      src: /home/osboxes/ansible/cert/service-account-key.pem
+      dest: /var/lib/kubernetes/service-account-key.pem
+  - name: copy service-account to /var/lib/kubernetes/
+    copy:
+      src: /home/osboxes/ansible/cert/service-account.pem
+      dest: /var/lib/kubernetes/service-account.pem
+  - name: copy encryption-config to /var/lib/kubernetes/
+    copy:
+      src: /home/osboxes/ansible/Encryption/encryption-config.yaml
+      dest: /var/lib/kubernetes/encryption-config.yaml

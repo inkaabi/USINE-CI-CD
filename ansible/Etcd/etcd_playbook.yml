@@ -1,0 +1,75 @@
+---
+- hosts: controller
+  remote_user: root
+  tasks:
+  - name: install dependency package
+    apt:
+      name: "{{item}}"
+      update_cache: yes
+    with_items:
+      - apt-transport-https
+      - ca-certificates
+      - curl 
+      - software-properties-common
+  - name: Add docker GPG
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+  - name: Add Docker API repository
+    apt_repository:
+      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ansible_distribution_release}} stable
+  - name: Install Docker
+    apt:
+      name: "{{item}}"
+      state: installed
+      update_cache: yes
+    with_items:
+       - docker-ce
+       - docker-ce-cli 
+       - containerd.io
+    
+      
+  - name: Download and Install the etcd Binaries
+    unarchive:
+      src: https://github.com/coreos/etcd/releases/download/v3.3.9/etcd-v3.3.9-linux-amd64.tar.gz
+      dest: /root
+      remote_src: yes
+  - name: Move etcd to bin
+    command: mv etcd-v3.3.9-linux-amd64/etcd /usr/local/bin/
+  - name: Move etcdctl to bin
+    command: mv etcd-v3.3.9-linux-amd64/etcdctl /usr/local/bin/
+  - name: create directory /etc/etcd
+    file: 
+      path: /etc/etcd 
+      state: directory
+  - name: create directory /var/lib/etcd
+    file:
+      path: /var/lib/etcd
+      state: directory 
+  - name:  copy ca certification
+    copy:
+      src: /home/osboxes/Desktop/ansible/cert/ca.pem
+      dest: /etc/etcd/ca.pem
+  - name:  copy kubernetes-key certification
+    copy:
+      src: /home/osboxes/Desktop/ansible/cert/kubernetes-key.pem
+      dest: /etc/etcd/kubernetes-key.pem
+  - name:  copy kubernetes certification
+    copy:
+      src: /home/osboxes/Desktop/ansible/cert/kubernetes.pem
+      dest: /etc/etcd/kubernetes.pem
+  - name: Copy the etcd.service systemd unit file
+    copy: 
+      src: conf_etcd.sh
+      dest: /root/conf_etcd.sh
+      owner: root
+      group: root
+      mode: 0744
+  - name: create etcd config
+    command: sh /root/conf_etcd.sh
+  - name: reload systemd
+    command: systemctl daemon-reload
+  - name: enable etcd
+    command: systemctl enable etcd
+  - name: start etcd
+    command: systemctl start etcd
+
